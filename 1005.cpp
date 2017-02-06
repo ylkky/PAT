@@ -3,28 +3,37 @@
 using namespace std;
 
 int main(){
-	int s=0;
-	string str;
-	
+	int s=0 , i=0;
+	string str = "";
+
 	cin >> str;
 	int n = str.size();
 	const char* ch;
-	
+
 	ch = str.c_str();
-	
+
 	for(int i=0;i<n;i++){
 		s += ch[i] - '0';
 	}
-	
+
 	int res=0;
-	
+
 	while(s){
 		res = res*10 + s%10;
+		if(s%10!=0){
+			if(i==0)
+				i=-1;
+		}
+		else if(i>=0)
+			i++;
 		s/=10;
 	}
-	
+
 	s = res;
-	
+
+	if(s==0)
+		cout << "zero" ;
+
 	while(s){
 		switch(s%10){
 			case 1:cout << "one";break;
@@ -42,6 +51,11 @@ int main(){
 		if(s!=0)
 			cout << " ";
 	}
-	
+
+		while(i>0){
+			cout << " zero" ;
+			i--;
+		}
+
 	return 0;
 }
