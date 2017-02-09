@@ -72,6 +72,5 @@ int main(){
 	cout << num[C2] << " " << amount[C2];
 
 	delete[] teamNum;
-
 	return 0;
 }
