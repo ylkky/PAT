@@ -1,5 +1,4 @@
 #include <iostream>
-
 using namespace std;
 
 #define infinit 1<<28
