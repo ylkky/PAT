@@ -39,12 +39,17 @@ int main(){
       cout << i;
       break;
     }
-    else if(N[1] > N[0] || i >= N[0]){
+    else if(N[1] > N[0] ){  //|| i >= N[0]
       compare(i - step, step/2, num[2-tag], N[0]);
       break;
     }
     else{
       i += step;
+      if(i >= N[0]){
+        compare(i - step, N[0] - i + step, num[2-tag], N[0]);
+        break;
+      }
+        //i = i > N[0] ? N[0] : i;
     }
   }
   return 0;
@@ -74,10 +79,18 @@ void compare(long long low, int step, string n, long long num){
 //  cout << "low = " << low << ", step = " << step << endl;
   long long i = low + step;
   long long num2;
-  num2 = C2D(n, i);
-  if(step == 0)
+  if(step <= 16){
+    for(i = low + 1; i < low + 2 * step; i++){
+      num2 = C2D(n, i);
+      if(num2 == num){
+        cout << i;
+        return ;
+      }
+    }
     cout << "Impossible";
+  }
   else{
+    num2 = C2D(n, i);
     if(num2 == num)
       cout << i;
     else if(num2 < num)
