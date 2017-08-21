@@ -2,13 +2,13 @@
 #include <string>
 using namespace std;
 
-long long C2D(string n , long long r);
-void compare(long long low, int step, string n, long long num);
+unsigned long long C2D(string n , unsigned long long r);
+void compare(unsigned long long low, int step, string n, unsigned long long num);
 
 int main(){
   string num[2];
   int tag, step;
-  long long N[2], i, r;
+  unsigned long long N[2], i, r;
   char c;
   for(i=0;i<2;i++)
     cin >> num[i];
@@ -39,7 +39,7 @@ int main(){
       cout << i;
       break;
     }
-    else if(N[1] > N[0] ){  //|| i >= N[0]
+    else if(N[1] > N[0]){  //|| i >= N[0]
       compare(i - step, step/2, num[2-tag], N[0]);
       break;
     }
@@ -55,9 +55,9 @@ int main(){
   return 0;
 }
 
-long long C2D(string n , long long r){
+unsigned long long C2D(string n , unsigned long long r){
   int i;
-  long long res = 0;
+  unsigned long long res = 0;
   int k;
   char ch;
 
@@ -75,10 +75,10 @@ long long C2D(string n , long long r){
   return res;
 }
 
-void compare(long long low, int step, string n, long long num){
+void compare(unsigned long long low, int step, string n, unsigned long long num){
 //  cout << "low = " << low << ", step = " << step << endl;
-  long long i = low + step;
-  long long num2;
+  unsigned long long i = low + step;
+  unsigned long long num2;
   if(step <= 16){
     for(i = low + 1; i < low + 2 * step; i++){
       num2 = C2D(n, i);
