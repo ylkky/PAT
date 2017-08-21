@@ -13,7 +13,7 @@ using namespace std;
 typedef int type;
 class Record;
 
-void printBill(vector<Record> v, int *rate);
+void printBill(map<string, vector<Record> >::iterator iter, int *rate, int mm);
 double printRecord(vector<Record>::iterator iter1, vector<Record>::iterator iter2, int *rate);
 
 
@@ -29,15 +29,6 @@ public:
       t = ON;
     time = m + h * 60 + d * 24 * 60;
   };
-  // bool operator < (const Record &a){
-  //   return time < a.time;
-  // }
-  // bool operator == (const Record &a){
-  //   return time == a.time;
-  // }
-  // bool operator > (const Record &a){
-  //   return time > a.time;
-  // }
 };
 
 bool func(Record &r1, Record &r2){
@@ -68,15 +59,16 @@ int main(){
     idList[name].push_back(r);
   }
   for(iter = idList.begin(); iter != idList.end(); iter ++){
-    printf("%s %02d\n", (iter->first).c_str(), mm);
-    printBill(iter->second, rate);
+    printBill(iter, rate, mm);
   }
   return 0;
 }
 
-void printBill(vector<Record> v, int* rate){
+void printBill(map<string, vector<Record> >::iterator iter, int* rate, int mm){
+  vector<Record> v = iter->second;
   vector<Record>::iterator iter1, iter2;
   double sum = 0;
+  int flag = 0;
   sort(v.begin(), v.end(), func);
   for(iter1 = v.begin(); iter1 != v.end(); iter1++){  //从第i条记录找起
     iter2 = iter1 + 1;
@@ -85,11 +77,16 @@ void printBill(vector<Record> v, int* rate){
     if(iter1->t == OFF || iter1->t == iter2->t)
       continue;
     else if(iter1->t == ON && iter2->t == OFF){
+      if(flag == 0){
+        printf("%s %02d\n", (iter->first).c_str(), mm);
+        flag = 1;
+      }
       sum += printRecord(iter1, iter2, rate);
       iter1++;
     }
   }
-  printf("Total amount: $%.2lf\n", sum);
+  if(sum != 0)
+    printf("Total amount: $%.2lf\n", sum);
 }
 
 double printRecord(vector<Record>::iterator iter1, vector<Record>::iterator iter2, int *rate){
@@ -124,8 +121,6 @@ double printRecord(vector<Record>::iterator iter1, vector<Record>::iterator iter
     }
     sum /= 100;
     printf("%02d:%02d:%02d %02d:%02d:%02d ", iter1->dd, iter1->hh, iter1->mm, iter2->dd, iter2->hh, iter2->mm);
-    //cout << iter1->dd << ":" << iter1->hh << ":" << iter1->mm << " ";
-    //cout << iter2->dd << ":" << iter2->hh << ":" << iter2->mm << " ";
     cout << iter2->time - iter1->time << " ";
     printf("$%.2lf\n",sum);
   return sum;
