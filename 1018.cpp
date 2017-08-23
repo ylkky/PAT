@@ -7,14 +7,19 @@ using namespace std;
 #define HALF C/2
 #define IFINITE 65533
 
+int C, N, S, M;
+int *c, **m;
+vector<int> ret, res;
+int minS = IFINITE, minB = IFINITE;
+
 int findMinDist(vector<int> dist, int *know);
-int sendBike(int *path,int C, int *c, int flag,int v);
-int backBike(int *path, int C, int *c, int flag, int v);
+int sendBike(vector<int> p);
+int backBike(vector<int> p);
+void findWay(vector<int> *path, int *send, int *back);
+void dfs(vector<int> *path, int v);
 
 int main() {
 	int i, j, k, v, flag;
-	int C, N, S, M;
-	int *c, **m;
 	cin >> C >> N >> S >> M;
 	c = new int[N + 1];
 	m = new int*[N + 1];
@@ -35,68 +40,40 @@ int main() {
 	flag = (c[S] == 0) ? 1 : -1;
 	vector<int> dist(N + 1);
 	int *know = new int[N + 1];
-	int *path = new int[N + 1];
-	vector<int>::iterator iter;
+	vector<int> *path = new vector<int>[N + 1];
 	for (i = 0; i < N + 1; i++) {
+		vector<int> tmp;
 		dist[i] = IFINITE;
 		know[i] = 0;
-		path[i] = -1;
+		path[i] = tmp;
 	}
-	path[0] = 0;
+	path[0].push_back(0);
 	dist[0] = 0;
 	while (1) {
 		v = findMinDist(dist, know);
 		if (v < 0) break;
 		know[v] = 1;
 		for (i = 1; i <= N; i++) {
-			if (know[i] == 0 && m[v][i] != -1) {
+			if (know[i] == 0 && m[v][i] != -1) {	// 所有v可到达的未知节点
 				if (dist[v] + m[v][i] < dist[i]) {
 					dist[i] = dist[v] + m[v][i];
-					path[i] = v;
+					path[i].clear();
+					path[i].push_back(v);
 				}
 				else if (dist[v] + m[v][i] == dist[i]) {
-					int pre, now;
-					pre = sendBike(path, C, c, flag, path[i]);
-					now = sendBike(path, C, c, flag, v);
-					if (now < pre ) {
-						dist[i] = dist[v] + m[v][i];
-						path[i] = v;
-					}
-					else if (now == pre) {
-						int bnow, bpre;
-						pre = backBike(path, C, c, flag, path[i]);
-						now = sendBike(path, C, c, flag, v);
-						if (now < pre) {
-							dist[i] = dist[v] + m[v][i];
-							path[i] = v;
-						}
-					}
+					path[i].push_back(v);
 				}
 			}
 		}
 	}
-	int send = sendBike(path, C, c, flag, path[S]) , back = backBike(path, C, c, flag, path[S]);
-	cout << send << " ";
-	vector<int> p;
-	i = S;
-	while (i != 0) {
-		p.push_back(i);
-		i = path[i];
-	}
+	dfs(path, S);
+	minB = backBike(res);
+	cout << minS << " ";
 	cout << 0;
-	for (i = p.size() - 1; i >= 0; i--)
-		cout << "->" << p[i];
-	cout << " ";
-	/*if (flag == 1) {
-		back -= HALF;
-		back = back >= 0 ? back : 0;
-	}
-	else
-	{
-		back += HALF;
-		back = back >= 0 ? back : 0;
-	}*/
-	cout << back;
+	for (i = res.size() - 1; i >= 0; i--)
+		cout << "->" << res[i];
+	cout << "->" << S << " ";
+	cout << minB;
 	return 0;
 }
 
@@ -114,61 +91,80 @@ int findMinDist(vector<int> dist, int *know) {
 	return idx;
 }
 
-int sendBike(int *path, int C, int *c, int flag, int v) {
+int sendBike(vector<int> p) {
 	int n = 0, g = 0, j;
-	//while (v != 0) {	// ���·�����ö��ٳ�
-	//	n += c[v] - HALF;	// ÿ��վ����ĳ�
-	//	v = path[v];
-	//}
-	vector<int> p;
-	while (v != 0) {
-		p.push_back(v);
-		v = path[v];
-	}
-	for (int i = 0; i < p.size();i++) {
-		j = p[i];
-		if (c[j] < HALF) {
-			if (c[j] + g > HALF)
+	while(!p.empty()) {	
+		j = p.back();
+		p.pop_back();
+		//j = p[i];
+		if (c[j] < HALF) {		// 缺车
+			if (c[j] + g >= HALF)	//之前拿的车够补
 				g -= (HALF - c[j]);
-			else {
-				n += HALF - g - c[j];
+			else {		// 之前的车不够，需要从中心再拿
+				n += (HALF - g - c[j]);
 				g = 0;
 			}
 		}
-		else if (c[j] > HALF)
-			g += c[j] - HALF;
+		else if (c[j] > HALF)	// 可以拿到多余的车
+			g += (c[j] - HALF);
 	}
-	if (flag == 1)
-		n = n + HALF - g;
-	
+	if (c[S] < HALF) {
+		if (c[S] + g < HALF)
+			n = n + (HALF - g - c[S]);
+	}
 	return n;
 }
 
-int backBike(int *path, int C, int *c, int flag, int v) {
+int backBike(vector<int> p) {
 	int n = 0, g = 0, j;
-	vector<int> p;
-	while (v != 0) {
-		p.push_back(v);
-		v = path[v];
-	}
-	for (int i = 0; i < p.size(); i++) {
-		j = p[i];
+	while (!p.empty()) {
+		j = p.back();
+		p.pop_back();
 		if (c[j] < HALF) {
-			if (c[j] + g > HALF)
+			if (c[j] + g >= HALF)
 				g -= (HALF - c[j]);
 			else {
-				n += HALF - g - c[j];
+				n += (HALF - g - c[j]);
 				g = 0;
 			}
 		}
 		else if (c[j] > HALF)
-			g += c[j] - HALF;
+			g += (c[j] - HALF) ;
 	}
-	if (flag == -1) {
-		g += HALF;
+	if (c[S] >= HALF) {
+		g += (c[S] - HALF);
 	}
 	else
-		g = g > HALF ? g - HALF : 0;
+		g = g > (HALF - c[S]) ? g - (HALF - c[S]) : 0;
 
 	return g;
+}
+
+void dfs(vector<int> *path, int v) {
+	vector<int>::iterator iter;
+	int w, send, back;
+	if (v == 0) {
+		send = sendBike(ret);
+		if (send < minS) {
+			res = ret;
+			minS = send;
+			minB = backBike(ret);
+		}
+		else if (send == minS) {
+			back = backBike(ret);
+			if (back < minB) {
+				res = ret;
+				minB = back;
+			}
+		}
+		return ;
+	}
+	for (iter = path[v].begin(); iter != path[v].end(); iter++) {
+		w = *iter;
+		if(w != 0)
+			ret.push_back(w);
+		dfs(path, w);
+		if (w != 0)
+			ret.pop_back();
+	}
 }
