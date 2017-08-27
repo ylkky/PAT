@@ -1,5 +1,5 @@
 # PreparingPAT
-##甲级（Advanced Level）
+甲级（Advanced Level）
 
 在达到乙级要求的基础上，还要求：
 1.	具有充分的英文阅读理解能力；
