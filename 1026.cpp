@@ -65,7 +65,7 @@ int main() {
 	vector<P> player;
 	for (i = 0; i < N; i++) {
 		cin >> hh >> ch >> mm >> ch >> ss >> p >> vip;
-		if (hh > 21 || hh < 8)
+		if (hh >= 21 || hh < 8)
 			continue;
 		P tmp(hh, mm, ss, p, vip);
 		player.push_back(tmp);
