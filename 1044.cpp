@@ -9,12 +9,12 @@ int N, M;
 
 int main() {
 	//freopen("1.txt", "r", stdin);
-	cin >> N >> M;
+	scanf("%d%d", &N, &M);
 	int *d = new int[N];
 	int i, j, k, sum = 0, max = MAXX;
 	vector<int> f, e;
 	for (i = 0; i < N; i++) {
-		cin >> d[i];
+		scanf("%d", &d[i]);
 	}
 	j = 0;
 	for (i = 0; i <= N; ) {
@@ -43,7 +43,7 @@ int main() {
 	}
 	k = f.size();
 	for (i = 0; i < k; i++) {
-		cout << f[i] << "-" << e[i] << endl;
+		printf("%d-%d\n", f[i], e[i]);
 	}
 	//fclose(stdin);
 	return 0;
