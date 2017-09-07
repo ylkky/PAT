@@ -1,16 +1,16 @@
 #include<iostream>
-#include<map>
+//#include<map>
 #include<set>
 using namespace std;
 
 int N, K;
-map<int, int> cnt;
+//map<int, long int> cnt;
 
 int main() {
 	//freopen("1", "r", stdin);
-	int i, j, k, m;
+	int i, j, k, m, min, r;
 	double count, t;
-	set<int>::iterator iter;
+	set<int>::iterator it1, it2;
 	scanf("%d", &N);
 	set<int> *v = new set<int>[N];
 	for (i = 0; i < N; i++) {
@@ -18,7 +18,6 @@ int main() {
 		for (j = 0; j < m; j++) {
 			scanf("%d", &k);	//cin >> k;
 			v[i].insert(k);
-			cnt[k] |= 1 << i;
 		}
 	}
 	scanf("%d", &K); // cin >> K;
@@ -28,10 +27,17 @@ int main() {
 		j--;
 		count = 0;
 		t = v[i].size() + v[j].size();
-		for (iter = v[i].begin(); iter != v[i].end(); iter++) {
-			m = cnt[*iter]&(1 << j);
-			if ( m != 0x0)
+		it1 = v[i].begin();
+		for (it2 = v[j].begin(); it1 != v[i].end() && it2 != v[j].end();) {
+			if (*it1 == *it2) {
 				count++;
+				it1++;
+				it2++;
+			}
+			else if (*it1 < *it2)
+				it1++;
+			else
+				it2++;
 		}
 		t -= count;
 		t = count / t;
