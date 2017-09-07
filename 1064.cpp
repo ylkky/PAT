@@ -9,7 +9,7 @@ struct treeNode {
 typedef struct treeNode Node;
 
 int N;
-Node T[2000];
+Node T[2001];
 
 int cmp(const void *a, const void *b) {
 	return *(int *)a - *(int *)b;
@@ -47,7 +47,7 @@ int main() {
 	a = (int *)malloc(sizeof(int) * N);
 	for (i = 0; i < N;i++)
 		scanf("%d", &a[i]);
-	for (i = 0; i < 2000; i++) {
+	for (i = 0; i < 2001; i++) {
 		T[i].left = T[i].right = -1;
 	}
 	qsort(a, N, sizeof(int), cmp);
