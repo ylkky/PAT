@@ -11,7 +11,7 @@ double *avgD, *minD;		//M
 int char2num(char * s) {
 	int i, ret = 0;
 	for (i = 0; s[i] != 0; i++) {
-		ret += 10 * ret + s[i] - '0';
+		ret = 10 * ret + s[i] - '0';
 	}
 	return ret;
 }
